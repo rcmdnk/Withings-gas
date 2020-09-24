@@ -122,7 +122,7 @@ function fillMeas(types=[1], sheetName='Weight', duration=2592000) {
     types.forEach(function(t) {
       data_one.push(measure[1][t]);
     });
-    data.push([data_one]);
+    data.push(data_one);
   });
   if (data.length) {
     sheet.getRange(sheet.getLastRow() + 1, 1,
