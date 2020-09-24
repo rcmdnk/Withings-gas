@@ -127,6 +127,7 @@ function fillMeas(types=[1], sheetName='Weight', duration=2592000) {
   if (data.length) {
     sheet.getRange(sheet.getLastRow() + 1, 1,
         data.length, columns.length).setValues(data);
+    sheet.getRange(2, 1, sheet.getLastRow()-1, sheet.getLastColumn()).sort(1);
   }
 }
 
