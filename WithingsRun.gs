@@ -25,7 +25,7 @@ var MEASTTYPE_DEF = {
 /**
  * Authorizes and makes a request to the Withings API.
  */
-function request(url, options) {
+function request(url, payload) {
   var service = getService();
   if (!service.hasAccess()) {
     var authorizationUrl = service.getAuthorizationUrl();
@@ -37,6 +37,12 @@ function request(url, options) {
     throw new Error('Open the following URL and re-run the script: ' +
         authorizationUrl);
     return null;
+  }
+  var options = {
+    headers: {
+      Authorization: 'Bearer ' + service.getAccessToken()
+    },
+    payload: payload
   }
   var response = UrlFetchApp.fetch(url, options);
   var result = JSON.parse(response.getContentText());
@@ -54,19 +60,14 @@ function getmeas(meastypes='1', duration=2592000) {
   var date = new Date() ;
   var enddate = Math.floor(date.getTime() / 1000);
   var startdate = enddate - duration;
-  var options = {
-    headers: {
-      Authorization: 'Bearer ' + service.getAccessToken()
-    },
-    payload: {
-      action: 'getmeas',
-      meastypes: meastypes,
-      category: 1,
-      startdate: startdate,
-      enddate: enddate
-    }
+  var payload = {
+    action: 'getmeas',
+    meastypes: meastypes,
+    category: 1,
+    startdate: startdate,
+    enddate: enddate
   }
-  var result = request(url, options);
+  var result = request(url, payload);
   measures = {}
   result['body']['measuregrps'].forEach(function(measuregrp) {
     date = measuregrp['date'];
