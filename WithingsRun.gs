@@ -55,7 +55,7 @@ function request(url, payload) {
 /**
  * Get measures
  */
-function getmeas(meastypes='1', duration=2592000) {
+function getMeas(meastypes='1', duration=2592000) {
   var url = 'https://wbsapi.withings.net/measure';
   var date = new Date() ;
   var enddate = Math.floor(date.getTime() / 1000);
@@ -91,40 +91,32 @@ function getmeas(meastypes='1', duration=2592000) {
 }
 
 /**
- * Get height, which is user input and only one input in the past
- * for the most of cases.
+ * Fill measures to Spreadsheet
  */
-function height() {
-  var result = getmeas('4', DURATION_HEIGHT);
-  if(!result) return;
-  var sheet = getSheet('Height', ['Datetime', MEASTTYPE_DEF[4]]);
-  var row = sheet.getDataRange().getValues().length + 1;
-  var lastrow = sheet.getLastRow();
-  var datetimes = sheet.getRange('A:A').getValues().flat().filter(Number);
-  var data = [];
-  result.forEach(function(measure) {
-    if (datetimes.includes(measure[0])) return;
-    data.push([measure[0], measure[1][4]]);
-  });
-  if (data.length) {
-    sheet.getRange(row, data.length, 1, 2).setValues(data);
+
+function getSheet(name, cols=[]) {
+  var ss = SpreadsheetApp.getActive();
+  var sheet = ss.getSheetByName(name);
+  if (!sheet) {
+    sheet = ss.insertSheet(name);
+    sheet.deleteRows(2, sheet.getMaxRows()-1);
+    var nCols = cols ? cols.length: 1;
+    sheet.deleteColumns(2, sheet.getMaxColumns()-1);
+    cols.forEach(function(c, i) {
+      sheet.getRange(1, i+1).setValue(c);
+    });
   }
+  return sheet;
 }
 
-/**
- * Get measures of Body Cardio
- */
-function body() {
-  var types = [1, 5, 6, 8 ,11, 76, 77, 88];
-  var result = getmeas(types.join(','), DURATION_BODY);
+function fillMeas(types=[1], sheetName='Weight', duration=2592000) {
+  var result = getMeas(types.join(','), DURATION_BODY);
   if(!result) return;
   var columns = ['Datetime'];
   types.forEach(function(t) {
     columns.push(MEASTTYPE_DEF[t]);
   });
   var sheet = getSheet('Body', columns);
-  var row = sheet.getDataRange().getValues().length + 1;
-  var lastrow = sheet.getLastRow();
   var datetimes = sheet.getRange('A:A').getValues().flat().filter(Number);
   var data = [];
   result.forEach(function(measure) {
@@ -136,8 +128,17 @@ function body() {
     data.push([data_one]);
   });
   if (data.length) {
-    sheet.getRange(row, data.length, 1, columns.length).setValues(data);
+    sheet.getRange(sheet.getLastRow() + 1, 1,
+        data.length, columns.length).setValues(data);
   }
+}
+
+function height() {
+  fillMeas([4], 'Height', DURATION_HEIGHT);
+}
+
+function body() {
+  fillMeas([1, 5, 6, 8 ,11, 76, 77, 88], 'Body', DURATION_BODY);
 }
 
 /**
@@ -190,22 +191,4 @@ function authCallback(request) {
  */
 function logRedirectUri() {
   Logger.log(OAuth2.getRedirectUri());
-}
-
-/**
- * Spreadsheet Helper
- */
-function getSheet(name, cols=[]) {
-  var ss = SpreadsheetApp.getActive();
-  var sheet = ss.getSheetByName(name);
-  if (!sheet) {
-    sheet = ss.insertSheet(name);
-    sheet.deleteRows(2, sheet.getMaxRows()-1);
-    var nCols = cols ? cols.length: 1;
-    sheet.deleteColumns(2, sheet.getMaxColumns()-1);
-    cols.forEach(function(c, i) {
-      sheet.getRange(1, i+1).setValue(c);
-    });
-  }
-  return sheet;
 }
