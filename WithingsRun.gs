@@ -29,13 +29,10 @@ function request(url, payload) {
   var service = getService();
   if (!service.hasAccess()) {
     var authorizationUrl = service.getAuthorizationUrl();
-    function errorReport(body) {
-      MailApp.sendEmail(EMAIL, 'Custom script error report', body);
-    }
-    Logger.log('Open the following URL and re-run the script: %s',
-        authorizationUrl);
-    throw new Error('Open the following URL and re-run the script: ' +
-        authorizationUrl);
+    var msg = 'Open the following URL and re-run the script: ' +
+      authorizationUrl;
+    MailApp.sendEmail(EMAIL, 'ERROR: Google App Script for Withings API', msg);
+    throw new Error(msg);
     return null;
   }
   var options = {
@@ -110,13 +107,13 @@ function getSheet(name, cols=[]) {
 }
 
 function fillMeas(types=[1], sheetName='Weight', duration=2592000) {
-  var result = getMeas(types.join(','), DURATION_BODY);
+  var result = getMeas(types.join(','), duration);
   if(!result) return;
   var columns = ['Datetime'];
   types.forEach(function(t) {
     columns.push(MEASTTYPE_DEF[t]);
   });
-  var sheet = getSheet('Body', columns);
+  var sheet = getSheet(sheetName, columns);
   var datetimes = sheet.getRange('A:A').getValues().flat().filter(Number);
   var data = [];
   result.forEach(function(measure) {
