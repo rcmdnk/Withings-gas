@@ -6,7 +6,7 @@ var MEASTTYPE_DEF = {
   8: 'Fat Mass Weight (kg)',
   9: 'Diastolic Blood Pressure (mmHg)',
   10: 'Systolic Blood Pressure (mmHg)',
-  11: 'Heart Pulse (bpm) - only for BPM and scale devices',
+  11: 'Heart Pulse (bpm)',
   12: 'Temperature (celsius)',
   54: 'SP02 (%)',
   71: 'Body Temperature (celsius)',
@@ -15,8 +15,7 @@ var MEASTTYPE_DEF = {
   77: 'Hydration (kg)',
   88: 'Bone Mass (kg)',
   91: 'Pulse Wave Velocity (m/s)',
-  123: 'VO2 max is a numerical measurement of your body’s ability to' +
-    'consume oxygen (ml/min/kg).'
+  123: 'VO2 max (ml/min/kg).'
 }
 
 function height() {
