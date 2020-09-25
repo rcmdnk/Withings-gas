@@ -6,7 +6,11 @@ function sleepTest() {
 }
 
 function sleepSummary() {
-  var fields = ['breathing_disturbances_intensity', 'deepsleepduration', 'durationtosleep', 'durationtosleep', 'durationtowakeup', 'hr_average', 'hr_max', 'hr_min', 'lightsleepduration', 'remsleepduration', 'rr_average', 'rr_max', 'rr_min', 'sleep_score', 'snoring', 'snoringepisodecount', 'wakeupcount', 'wakeupduration'];
+  var fields = ['breathing_disturbances_intensity', 'deepsleepduration',
+      'durationtosleep', 'durationtosleep', 'durationtowakeup', 'hr_average',
+      'hr_max', 'hr_min', 'lightsleepduration', 'remsleepduration',
+      'rr_average', 'rr_max', 'rr_min', 'sleep_score', 'snoring',
+      'snoringepisodecount', 'wakeupcount', 'wakeupduration'];
   var dateInfo = ['date',  'timezone', 'startdate', 'enddate'];
   var columns = dateInfo.concat();
   fields.forEach(function(f) {

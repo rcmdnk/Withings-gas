@@ -11,7 +11,8 @@ function request(url, payload, listName) {
     var authorizationUrl = service.getAuthorizationUrl();
     var msg = 'Open the following URL and re-run the script: ' +
       authorizationUrl;
-    MailApp.sendEmail(EMAIL, 'NEED AUTHENTICATION: Google App Script for Withings API', msg);
+    MailApp.sendEmail(EMAIL,
+      'NEED AUTHENTICATION: Google App Script for Withings API', msg);
     throw new Error(msg);
   }
   var options = {
@@ -85,7 +86,7 @@ function authCallback(request) {
 }
 
 /**
- * Logs the redict URI to register.
+ * Logs the redirect URI to register.
  */
 function logRedirectUri() {
   Logger.log(OAuth2.getRedirectUri());

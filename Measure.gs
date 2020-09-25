@@ -52,7 +52,7 @@ function body() {
       d[1],
       d[2],
       d[1]/(getHeight(d[0])**2),
-      d[3] ? d[3]/d[1] * 100 : null, 
+      d[3] ? d[3]/d[1] * 100 : null,
       d[4] ? d[4]/d[1] * 100 : null,
       d[5] ? d[5]/d[1] * 100 : null,
       d[6],
@@ -115,7 +115,8 @@ function getMeas(types=[1], duration=2592000) {
 function getHeight(date) {
   var ss = SpreadsheetApp.getActive();
   var sheet = ss.getSheetByName('Height');
-  var datetimes = sheet.getRange(2, 1, sheet.getMaxRows()-1).getDisplayValues().flat();
+  var datetimes = sheet.getRange(
+      2, 1, sheet.getMaxRows()-1).getDisplayValues().flat();
   var heights = sheet.getRange(2, 2, sheet.getMaxRows()-1).getValues().flat();
   var height = null;
   var time = new Date(date).getTime();
