@@ -23,9 +23,6 @@ function fillValues(sheetName, columns, data, formatA='yyyy/MM/dd HH:mm:ss') {
   var datetimes = sheet.getRange('A:A').getDisplayValues().flat();
   var data_new = [];
   var toString = Object.prototype.toString;
-  if(datetimes[1]!=data[0][0]){
-    Logger.log('X' + datetimes[1] + 'X' + ' != ' + 'X' + data[0][0] + 'X');
-  }
   data.forEach(function(d) {
     if (datetimes.includes(d[0])) return;
     data_new.push(d);
