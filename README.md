@@ -21,7 +21,7 @@ Google App Script for Withings
 * EMAIL will be used to notify when authorization is needed.
 
 ## Get Body information
-Open `Measure.gs` and run function `body`;
+Open `Measure.gs` and run function `body`.
 
 ## Get Sleep information
-Open `Sleep.gs` and run function `sleepSummary;
+Open `Sleep.gs` and run function `sleepSummary`.
