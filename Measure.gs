@@ -61,16 +61,6 @@ function body() {
   fillValues('Body', columns, data, 'yyyy/MM/dd HH:mm:ss');
 }
 
-function fillMeas(types=[1], sheetName='Weight', duration=2592000) {
-  var columns = ['Datetime'];
-  types.forEach(function(t) {
-    columns.push(MEASTTYPE_DEF[t]);
-  });
-  var data = getMeas(types, duration);
-  if(!data) return;
-  fillValues(sheetName, columns, data, 'yyyy/MM/dd HH:mm:ss');
-}
-
 function getMeas(types=[1], duration=2592000) {
   var url = 'https://wbsapi.withings.net/measure';
   var meastypes = types.join(',')
