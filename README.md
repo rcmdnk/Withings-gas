@@ -15,7 +15,7 @@ Google App Script for Withings
 * CLIENT_ID and CLIENT_SECRET can be found as following:
     * Make sure you have a [Withings account](https://account.withings.com/connectionuser/account_create).
     * Register as [Withings API partner here](https://account.withings.com/partner/add_oauth2).
-        * callback function should be like: https://script.google.com/macros/d/<SCRIPT_ID>/usercallback
+        * callback function should be like: `https://script.google.com/macros/d/<SCRIPT_ID>/usercallback`
         * `SCRIPT_ID` is found in the menu: File -> Project properties -> Script Id 
     * Get client id and client (consumer) secret.
 * EMAIL will be used to notify when authorization is needed.
