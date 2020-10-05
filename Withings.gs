@@ -11,6 +11,7 @@ function request(url, payload, listName) {
     var authorizationUrl = service.getAuthorizationUrl();
     var msg = 'Open the following URL and re-run the script: ' +
       authorizationUrl;
+    if (typeof EMAIL === 'undefined') throw new Error('Set "EMAIL" if necessary\n\n' + msg); 
     MailApp.sendEmail(EMAIL,
       'NEED AUTHENTICATION: Google App Script for Withings API', msg);
     throw new Error(msg);
@@ -51,6 +52,9 @@ function reset() {
  * Configures the service.
  */
 function getService() {
+  if (typeof CLIENT_ID === 'undefined') throw new Error('Set CLIENT_ID'); 
+  if (typeof CLIENT_SECRET === 'undefined') throw new Error('Set CLIENT_SECRET'); 
+
   return OAuth2.createService('Withings')
       // Set the endpoint URLs.
       .setAuthorizationBaseUrl(
@@ -66,7 +70,7 @@ function getService() {
       .setCallbackFunction('authCallback')
 
       // Set scope
-      .setScope('user.metrics,user.activity')
+      .setScope(SCOPE)
 
       // Set the property store where authorized tokens should be persisted.
       .setPropertyStore(PropertiesService.getUserProperties());
