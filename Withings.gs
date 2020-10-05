@@ -70,7 +70,7 @@ function getService() {
       .setCallbackFunction('authCallback')
 
       // Set scope
-      .setScope('user.metrics,user.activity')
+      .setScope(SCOPE)
 
       // Set the property store where authorized tokens should be persisted.
       .setPropertyStore(PropertiesService.getUserProperties());
