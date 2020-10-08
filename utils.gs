@@ -6,9 +6,9 @@ function getSheet(name, cols=[], formatA='yyyy/MM/dd HH:mm:ss') {
     sheet = ss.insertSheet(name);
     // remain 1 additional row, to frozen first row
     // (need additional rows to fix rows)
-    sheet.deleteRows(2, sheet.getMaxRows()-2);
+    sheet.deleteRows(1, sheet.getMaxRows()-2);
     var nCols = cols ? cols.length: 1;
-    sheet.deleteColumns(2, sheet.getMaxColumns()-1);
+    sheet.deleteColumns(1, sheet.getMaxColumns()-1);
     cols.forEach(function(c, i) {
       sheet.getRange(1, i+1).setValue(c);
     });
@@ -40,4 +40,8 @@ function getDate(unixtime=null, timezone=null, format='yyyy/MM/dd HH:mm:ss'){
     return Utilities.formatDate(new Date(), timezone, format);
   }
   return Utilities.formatDate(new Date(unixtime * 1000), timezone, format);
+}
+
+function testDate() {
+  Logger.log(Utilities.formatDate(new Date(), 'JST', 'yyyy/MM/dd HH:mm:ss'));
 }
