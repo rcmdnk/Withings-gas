@@ -11,7 +11,10 @@ function request(url, payload, listName) {
     var authorizationUrl = service.getAuthorizationUrl();
     var msg = 'Open the following URL and re-run the script: ' +
       authorizationUrl;
-    if (typeof EMAIL === 'undefined') throw new Error('Set "EMAIL" if necessary\n\n' + msg); 
+    if (typeof EMAIL === 'undefined') {
+      var EMAIL = Session.getActiveUser().getEmail();
+    }
+    if (!EMAIL) throw new Error('Set "EMAIL" if necessary\n\n' + msg); 
     MailApp.sendEmail(EMAIL,
       'NEED AUTHENTICATION: Google App Script for Withings API', msg);
     throw new Error(msg);

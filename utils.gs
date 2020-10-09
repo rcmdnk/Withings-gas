@@ -22,7 +22,6 @@ function fillValues(sheetName, columns, data, formatA='yyyy/MM/dd HH:mm:ss') {
   var sheet = getSheet(sheetName, columns, formatA);
   var datetimes = sheet.getRange('A:A').getDisplayValues().flat();
   var data_new = [];
-  var toString = Object.prototype.toString;
   data.forEach(function(d) {
     if (datetimes.includes(d[0])) return;
     data_new.push(d);
@@ -40,8 +39,4 @@ function getDate(unixtime=null, timezone=null, format='yyyy/MM/dd HH:mm:ss'){
     return Utilities.formatDate(new Date(), timezone, format);
   }
   return Utilities.formatDate(new Date(unixtime * 1000), timezone, format);
-}
-
-function testDate() {
-  Logger.log(Utilities.formatDate(new Date(), 'JST', 'yyyy/MM/dd HH:mm:ss'));
 }
