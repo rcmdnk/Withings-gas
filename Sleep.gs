@@ -1,7 +1,7 @@
-function sleepTest(duration=2592000) {
+function sleepTest() {
   var today = new Date() ;
   var enddate = Math.floor(today.getTime() / 1000);
-  var startdate = enddate - duration;
+  var startdate = enddate - DURATION_SLEEP_SUMMARY;
   sleep(startdate, enddate);
 }
 
@@ -34,7 +34,7 @@ function sleep(startdate, enddate) {
 
 function getSleep(fields, duration=2592000) {
   var url = 'https://wbsapi.withings.net/v2/sleep';
-  var today = new Date() ;
+　var today = new Date() ;
   var enddate = Math.floor(today.getTime() / 1000);
   var startdate = enddate - duration;
   var payload = {
