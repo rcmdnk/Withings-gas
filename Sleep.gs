@@ -1,24 +1,9 @@
+
 function sleepTest() {
   var today = new Date() ;
   var enddate = Math.floor(today.getTime() / 1000);
   var startdate = enddate - DURATION_SLEEP_SUMMARY;
   sleep(startdate, enddate);
-}
-
-function sleepSummary() {
-  var fields = ['breathing_disturbances_intensity', 'deepsleepduration',
-      'durationtosleep', 'durationtowakeup', 'hr_average',
-      'hr_max', 'hr_min', 'lightsleepduration', 'remsleepduration',
-      'rr_average', 'rr_max', 'rr_min', 'sleep_score', 'snoring',
-      'snoringepisodecount', 'wakeupcount', 'wakeupduration'];
-  var dateInfo = ['date',  'timezone', 'startdate', 'enddate'];
-  var columns = dateInfo.concat();
-  fields.forEach(function(f) {
-    columns.push(f);
-  });
-  var data = getSleepSummary(fields, dateInfo, DURATION_SLEEP_SUMMARY);
-  if(!data) return;
-  fillValues('SleepSummary', columns, data, 'yyyy-MM-dd');
 }
 
 function sleep(startdate, enddate) {
@@ -32,11 +17,8 @@ function sleep(startdate, enddate) {
   fillValues('Sleep', columns, data, 'yyyy/MM/dd HH:mm:ss');
 }
 
-function getSleep(fields, duration=2592000) {
+function getSleep(fields, startdate, enddate) {
   var url = 'https://wbsapi.withings.net/v2/sleep';
-　var today = new Date() ;
-  var enddate = Math.floor(today.getTime() / 1000);
-  var startdate = enddate - duration;
   var payload = {
     action: 'get',
     data_fields: fields.join(','),
@@ -63,6 +45,22 @@ function getSleep(fields, duration=2592000) {
     );
   });
   return data;
+}
+
+function sleepSummary() {
+  var fields = ['breathing_disturbances_intensity', 'deepsleepduration',
+      'durationtosleep', 'durationtowakeup', 'hr_average',
+      'hr_max', 'hr_min', 'lightsleepduration', 'remsleepduration',
+      'rr_average', 'rr_max', 'rr_min', 'sleep_score', 'snoring',
+      'snoringepisodecount', 'wakeupcount', 'wakeupduration'];
+  var dateInfo = ['date',  'timezone', 'startdate', 'enddate'];
+  var columns = dateInfo.concat();
+  fields.forEach(function(f) {
+    columns.push(f);
+  });
+  var data = getSleepSummary(fields, dateInfo, DURATION_SLEEP_SUMMARY);
+  if(!data) return;
+  fillValues('SleepSummary', columns, data, 'yyyy-MM-dd');
 }
 
 function getSleepSummary(fields, dateInfo, duration=2592000) {
