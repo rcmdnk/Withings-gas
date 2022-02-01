@@ -97,7 +97,6 @@ function getService() {
  */
 function myHandler(payload) {
   payload.action = 'requesttoken'; 
-  payload.grant_type = 'authorization_code';
   return payload;
 }
 
