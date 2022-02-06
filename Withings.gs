@@ -21,11 +21,17 @@ function request(url, payload, listName) {
   }
 
   var access_token = service.getToken().body.access_token;
-  if (!access_token) {
-    reset();
-    throw new Error('Wrong access_token: ' + access_token);
+  var mainList = getList(url, payload, listName, access_token);
+  if(mainList == 0){
+    mainList = getList(url, payload, listName, refresh(service).body.access_token);
   }
+  return mainList;
+}
 
+/**
+ * Get main list
+ */
+function getList(url, payload, listName, access_token){
   var options = {
     headers: {
       Authorization: 'Bearer ' + access_token
@@ -37,7 +43,7 @@ function request(url, payload, listName) {
   var mainList = [];
   while(true){
     if (!('status' in result) || result['status'] != 0){
-      throw new Error('Withings API returns wrong status: \n' + response);
+      return 0;
     }
     mainList = mainList.concat(result['body'][listName]);
     if(result['body']['more']){
@@ -49,6 +55,21 @@ function request(url, payload, listName) {
     break;
   }
   return mainList;
+}
+
+/**
+ * Refresh token
+ */
+function refresh(service){
+  var payload = {
+    refresh_token: service.getToken().body.refresh_token,
+    client_id: service.clientId_,
+    client_secret: service.clientSecret_,
+    grant_type: 'refresh_token'
+  };
+  var token = service.fetchToken_(payload, service.refreshUrl_);
+  service.saveToken_(token);
+  return token;
 }
 
 /**
@@ -80,9 +101,6 @@ function getService() {
 
       // Set scope
       .setScope(SCOPE)
-
-      // Set Grant Type
-      //.setGrantType('authorization_code')
 
       // Set Token Payload Handler
       .setTokenPayloadHandler(myHandler)
