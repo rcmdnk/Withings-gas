@@ -7,8 +7,8 @@ function getSheet(name, cols=[], formatA='yyyy/MM/dd HH:mm:ss') {
     // remain 1 additional row, to frozen first row
     // (need additional rows to fix rows)
     sheet.deleteRows(1, sheet.getMaxRows()-2);
-    var nCols = cols ? cols.length: 1;
-    sheet.deleteColumns(1, sheet.getMaxColumns()-1);
+    var nCols = cols.length != 0 ? cols.length: 1;
+    sheet.deleteColumns(1, sheet.getMaxColumns() - nCols);
     cols.forEach(function(c, i) {
       sheet.getRange(1, i+1).setValue(c);
     });
