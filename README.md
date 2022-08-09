@@ -1,5 +1,5 @@
 # Withings-gas
-Google App Script for Withings
+Google Apps Script for Withings
 
 ## Preparation
 
