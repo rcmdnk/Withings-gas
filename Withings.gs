@@ -6,40 +6,51 @@
  * Authorizes and makes a request to the Withings API.
  */
 function request(url, payload, listName) {
-  var service = getService();
-  if (!service.hasAccess()) {
-    var authorizationUrl = service.getAuthorizationUrl();
-    var msg = 'Open the following URL and re-run the script: ' +
-      authorizationUrl;
-    if (typeof EMAIL === 'undefined') {
-      var EMAIL = Session.getActiveUser().getEmail();
-    }
-    if (!EMAIL) throw new Error('Set "EMAIL" if necessary\n\n' + msg); 
-    MailApp.sendEmail(EMAIL,
-      'NEED AUTHENTICATION: Google App Script for Withings API', msg);
-    throw new Error(msg);
-  }
-  var access_token = service.getToken().body.access_token;
-  var mainList = getList(url, payload, listName, access_token);
+  check_service();
+  let mainList = getList(url, payload, listName);
   if(mainList == 0){
-    mainList = getList(url, payload, listName, refresh(service).body.access_token);
+    Logger.log(e);
+    Logger.log('Try to refresh token.')
+    mainList = getList(url, payload, listName);
   }
   return mainList;
 }
 
+/**                                                                             
+ * Check service                                                                
+ */                                                                             
+function check_service(){                                                       
+  const service = getService();                                                 
+  if (!service.hasAccess()) {                                                   
+    const authorizationUrl = service.getAuthorizationUrl();                     
+    const msg = 'Open the following URL and re-run the script: ' +              
+      authorizationUrl; 
+    let EMAIL = PropertiesService.getScriptProperties().getProperty("EMAIL");                                                        
+    if (!EMAIL) {                                                               
+      EMAIL = Session.getActiveUser().getEmail();                               
+    }                                                                           
+    if (!EMAIL) throw new Error('Set "EMAIL" if necessary\n\n' + msg);-         
+    MailApp.sendEmail(EMAIL,                                                    
+      'NEED AUTHENTICATION: Google App Script for Withings API', msg);          
+    throw new Error(msg);                                                       
+  }                                                                             
+  Logger.log('Service is authorized.')                                          
+}     
+
 /**
  * Get main list
  */
-function getList(url, payload, listName, access_token){
-  var options = {
+function getList(url, payload, listName){
+  const service = getService();                                                 
+  const options = {
     headers: {
-      Authorization: 'Bearer ' + access_token
+      Authorization: 'Bearer ' + service.getToken().body.access_token
     },
     payload: payload
   };
-  var response = UrlFetchApp.fetch(url, options);
-  var result = JSON.parse(response.getContentText());
-  var mainList = [];
+  const response = UrlFetchApp.fetch(url, options);
+  let result = JSON.parse(response.getContentText());
+  let mainList = [];
   while(true){
     if (!('status' in result) || result['status'] != 0){
       return 0;
@@ -60,13 +71,13 @@ function getList(url, payload, listName, access_token){
  * Refresh token
  */
 function refresh(service){
-  var payload = {
+  const payload = {
     refresh_token: service.getToken().body.refresh_token,
     client_id: service.clientId_,
     client_secret: service.clientSecret_,
     grant_type: 'refresh_token'
   };
-  var token = service.fetchToken_(payload, service.refreshUrl_);
+  const token = service.fetchToken_(payload, service.refreshUrl_);
   service.saveToken_(token);
   return token;
 }
@@ -82,8 +93,11 @@ function reset() {
  * Configures the service.
  */
 function getService() {
-  if (typeof CLIENT_ID === 'undefined') throw new Error('Set CLIENT_ID'); 
-  if (typeof CLIENT_SECRET === 'undefined') throw new Error('Set CLIENT_SECRET'); 
+  const properties = PropertiesService.getScriptProperties();
+  const CLIENT_ID = properties.getProperty("CLIENT_ID");
+  const CLIENT_SECRET = properties.getProperty("CLIENT_SECRET");
+  if (!CLIENT_ID) throw new Error('Set CLIENT_ID'); 
+  if (!CLIENT_SECRET) throw new Error('Set CLIENT_SECRET'); 
   return OAuth2.createService('Withings')
       // Set the endpoint URLs.
       .setAuthorizationBaseUrl(
@@ -121,8 +135,8 @@ function myHandler(payload) {
  * Handles the OAuth callback.
  */
 function authCallback(request) {
-  var service = getService();
-  var authorized = service.handleCallback(request);
+  const service = getService();
+  const authorized = service.handleCallback(request);
   if (authorized) {
     return HtmlService.createHtmlOutput('Success!');
   } else {

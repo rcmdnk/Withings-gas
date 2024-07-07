@@ -1,7 +1,7 @@
 function getSheet(name, cols=[], formatA='yyyy/MM/dd HH:mm:ss') {
-  var ss = SpreadsheetApp.getActive();
+  const ss = SpreadsheetApp.getActive();
   ss.setSpreadsheetTimeZone(TIME_ZONE);
-  var sheet = ss.getSheetByName(name);
+  let sheet = ss.getSheetByName(name);
   if (!sheet) {
     sheet = ss.insertSheet(name);
     // remain 1 additional row, to frozen first row
@@ -19,9 +19,9 @@ function getSheet(name, cols=[], formatA='yyyy/MM/dd HH:mm:ss') {
 }
 
 function fillValues(sheetName, columns, data, formatA='yyyy/MM/dd HH:mm:ss') {
-  var sheet = getSheet(sheetName, columns, formatA);
-  var datetimes = sheet.getRange('A:A').getDisplayValues().flat();
-  var data_new = [];
+  const sheet = getSheet(sheetName, columns, formatA);
+  const datetimes = sheet.getRange('A:A').getDisplayValues().flat();
+  const data_new = [];
   data.forEach(function(d) {
     if (datetimes.includes(d[0])) return;
     data_new.push(d);

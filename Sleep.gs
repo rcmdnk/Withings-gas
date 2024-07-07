@@ -1,32 +1,32 @@
 
 function sleepTest() {
-  var today = new Date() ;
-  var enddate = Math.floor(today.getTime() / 1000);
-  var startdate = enddate - DURATION_SLEEP_SUMMARY;
+  const today = new Date() ;
+  const enddate = Math.floor(today.getTime() / 1000);
+  const startdate = enddate - DURATION_SLEEP_SUMMARY;
   sleep(startdate, enddate);
 }
 
 function sleep(startdate, enddate) {
-  var fields = ['hr', 'rr', 'snoring'];
-  var columns = ['datetime'];
+  const fields = ['hr', 'rr', 'snoring'];
+  const columns = ['datetime'];
   fields.forEach(function(f) {
     columns.push(f);
   });
-  var data = getSleep(fields, startdate, enddate);
+  const data = getSleep(fields, startdate, enddate);
   if(!data) return;
   fillValues('Sleep', columns, data, 'yyyy/MM/dd HH:mm:ss');
 }
 
 function getSleep(fields, startdate, enddate) {
-  var url = 'https://wbsapi.withings.net/v2/sleep';
-  var payload = {
+  const url = 'https://wbsapi.withings.net/v2/sleep';
+  const payload = {
     action: 'get',
     data_fields: fields.join(','),
     startdate: startdate,
     enddate: enddate
   }
-  var series = request(url, payload, 'series');
-  var sleep = {};
+  const series = request(url, payload, 'series');
+  const sleep = {};
   series.forEach(function(s) {
     fields.forEach(function(f) {
       if (!(f in s)) return;
@@ -37,7 +37,7 @@ function getSleep(fields, startdate, enddate) {
     });
   });
   
-  var data = Object.keys(sleep).map(function(date) {
+  const data = Object.keys(sleep).map(function(date) {
     return [getDate(date)].concat(
       fields.map(function(f) {
         return sleep[date][f];
@@ -48,34 +48,34 @@ function getSleep(fields, startdate, enddate) {
 }
 
 function sleepSummary() {
-  var fields = ['breathing_disturbances_intensity', 'deepsleepduration',
+  const fields = ['breathing_disturbances_intensity', 'deepsleepduration',
       'durationtosleep', 'durationtowakeup', 'hr_average',
       'hr_max', 'hr_min', 'lightsleepduration', 'remsleepduration',
       'rr_average', 'rr_max', 'rr_min', 'sleep_score', 'snoring',
       'snoringepisodecount', 'wakeupcount', 'wakeupduration'];
-  var dateInfo = ['date',  'timezone', 'startdate', 'enddate'];
-  var columns = dateInfo.concat();
+  const dateInfo = ['date',  'timezone', 'startdate', 'enddate'];
+  const columns = dateInfo.concat();
   fields.forEach(function(f) {
     columns.push(f);
   });
-  var data = getSleepSummary(fields, dateInfo, DURATION_SLEEP_SUMMARY);
+  const data = getSleepSummary(fields, dateInfo, DURATION_SLEEP_SUMMARY);
   if(!data) return;
   fillValues('SleepSummary', columns, data, 'yyyy-MM-dd');
 }
 
 function getSleepSummary(fields, dateInfo, duration=2592000) {
-  var url = 'https://wbsapi.withings.net/v2/sleep';
-  var today = new Date();
-  var enddate = Math.floor(today.getTime() / 1000);
-  var startdate = enddate - duration;
-  var payload = {
+  const url = 'https://wbsapi.withings.net/v2/sleep';
+  const today = new Date();
+  const enddate = Math.floor(today.getTime() / 1000);
+  const startdate = enddate - duration;
+  const payload = {
     action: 'getsummary',
     lastupdate: startdate,
     data_fields: fields.join(',')
   }
-  var series = request(url, payload, 'series');
-  var data = series.map(function(s) {
-    var oneData = dateInfo.map(function(i) {
+  const series = request(url, payload, 'series');
+  const data = series.map(function(s) {
+    const oneData = dateInfo.map(function(i) {
       if (['startdate', 'enddate'].includes(i)) {
         return getDate(s[i]);
       }

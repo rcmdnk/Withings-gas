@@ -1,4 +1,4 @@
-var MEASTTYPE_DEF = {
+const MEASTTYPE_DEF = {
   1: 'Weight (kg)',
   4: 'Height (meter)',
   5: 'Fat Free Mass (kg)',
@@ -19,20 +19,20 @@ var MEASTTYPE_DEF = {
 }
 
 function height() {
-  var types = [4];
-  var columns = ['Datetime'];
+  const types = [4];
+  const columns = ['Datetime'];
   types.forEach(function(t) {
     columns.push(MEASTTYPE_DEF[t]);
   });
-  var data = getMeas(types, DURATION_HEIGHT);
+  const data = getMeas(types, DURATION_HEIGHT);
   if(!data) return;
   fillValues('Height', columns, data, 'yyyy/MM/dd HH:mm:ss');
 }
 
 function body() {
   height();
-  var types = [1, 6, 76, 77, 88, 11, 91];
-  var columns = [
+  const types = [1, 6, 76, 77, 88, 11, 91];
+  const columns = [
     'Datetime',
     MEASTTYPE_DEF[1],
     MEASTTYPE_DEF[6],
@@ -43,7 +43,7 @@ function body() {
     MEASTTYPE_DEF[11],
     MEASTTYPE_DEF[91]
   ];
-  var data = getMeas(types, DURATION_BODY);
+  let data = getMeas(types, DURATION_BODY);
   if(!data) return;
   data = data.map(function(d) {
     return [
@@ -62,20 +62,20 @@ function body() {
 }
 
 function getMeas(types=[1], duration=2592000) {
-  var url = 'https://wbsapi.withings.net/measure';
-  var meastypes = types.join(',')
-  var today = new Date() ;
-  var enddate = Math.floor(today.getTime() / 1000);
-  var startdate = enddate - duration;
-  var payload = {
+  const url = 'https://wbsapi.withings.net/measure';
+  const meastypes = types.join(',')
+  const today = new Date() ;
+  const enddate = Math.floor(today.getTime() / 1000);
+  const startdate = enddate - duration;
+  const payload = {
     action: 'getmeas',
     meastypes: meastypes,
     category: 1,
     startdate: startdate,
     enddate: enddate
   }
-  var measuregrps = request(url, payload, 'measuregrps');
-  var measures = {}
+  const measuregrps = request(url, payload, 'measuregrps');
+  const measures = {}
   measuregrps.forEach(function(measuregrp) {
     var date = measuregrp['date'];
     if (!(date in measures)) {
@@ -87,7 +87,7 @@ function getMeas(types=[1], duration=2592000) {
     });
   });
 
-  var data = Object.keys(measures).map(function(date) {
+  const data = Object.keys(measures).map(function(date) {
     return [getDate(date)].concat(
       types.map(function(t) {
         return measures[date][t];
@@ -102,13 +102,13 @@ function getMeas(types=[1], duration=2592000) {
 }
 
 function getHeight(date) {
-  var ss = SpreadsheetApp.getActive();
-  var sheet = ss.getSheetByName('Height');
-  var datetimes = sheet.getRange(
+  const ss = SpreadsheetApp.getActive();
+  const sheet = ss.getSheetByName('Height');
+  const datetimes = sheet.getRange(
       2, 1, sheet.getMaxRows()-1).getDisplayValues().flat();
-  var heights = sheet.getRange(2, 2, sheet.getMaxRows()-1).getValues().flat();
-  var height = null;
-  var time = new Date(date).getTime();
+  const heights = sheet.getRange(2, 2, sheet.getMaxRows()-1).getValues().flat();
+  let height = null;
+  const time = new Date(date).getTime();
   for (var i=datetimes.length-1; i>=0; i--) {
     if (new Date(datetimes[i]).getTime() < time){
       height = heights[i];
