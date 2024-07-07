@@ -19,7 +19,6 @@ function request(url, payload, listName) {
       'NEED AUTHENTICATION: Google App Script for Withings API', msg);
     throw new Error(msg);
   }
-  Logger.log(service.getToken())
   var access_token = service.getToken().body.access_token;
   var mainList = getList(url, payload, listName, access_token);
   if(mainList == 0){
