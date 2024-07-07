@@ -19,8 +19,31 @@ Google Apps Script for Withings
             * `SCRIPT_ID` is found in the menu of Apps Script: File -> Project properties -> Script Id
         * Get client id and client (consumer) secret.
 
-## Get Body information
+## Parameters
+
+Edit params.gs if you want to change the parameters.
+
+## Fill data in the spreadsheet
+
+### Fill Body information
 Open `Measure.gs` and run function `body`.
 
-## Get Sleep information
+### Fill Sleep information
 Open `Sleep.gs` and run function `sleepSummary`.
+
+
+## Schedule job
+
+It is good to schedule the job to retrieve messages every day.
+
+* Go `Trigger` (Clock icon) in the Apps Script project.
+* `Add Trigger`
+    * Choose which function to run: `body`
+    * Which runs at deployment: `Head`
+    * Select event source: `Time-driven`
+    * Select type of time based trigger: `Day timer`
+    * Select time of day: `0 am to 1 am`
+
+This trigger fill body data between 0 am to 1 am every day.
+
+Set a trigger for `sleepSummary` as well.
