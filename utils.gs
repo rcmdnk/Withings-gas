@@ -1,17 +1,15 @@
-function getSheet(name, cols=[], formatA='yyyy/MM/dd HH:mm:ss') {
+function getSheet(sheetName, columns=[], formatA='yyyy/MM/dd HH:mm:ss') {
   const ss = SpreadsheetApp.getActive();
   ss.setSpreadsheetTimeZone(TIME_ZONE);
-  let sheet = ss.getSheetByName(name);
+  let sheet = ss.getSheetByName(sheetName);
   if (!sheet) {
-    sheet = ss.insertSheet(name);
+    sheet = ss.insertSheet(sheetName);
     // remain 1 additional row, to frozen first row
     // (need additional rows to fix rows)
     sheet.deleteRows(1, sheet.getMaxRows()-2);
-    var nCols = cols.length != 0 ? cols.length: 1;
-    sheet.deleteColumns(1, sheet.getMaxColumns() - nCols);
-    cols.forEach(function(c, i) {
-      sheet.getRange(1, i+1).setValue(c);
-    });
+    const nColumns = columns.length != 0 ? columns.length: 1;
+    sheet.deleteColumns(1, sheet.getMaxColumns() - nColumns);
+    sheet.getRange(1, 1, 1, columns.length).setValues([columns]);
     sheet.getRange('A:A').setNumberFormat(formatA);
     sheet.setFrozenRows(1);
   }
