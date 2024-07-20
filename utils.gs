@@ -38,3 +38,13 @@ function getDate(unixtime=null, timezone=null, format='yyyy/MM/dd HH:mm:ss'){
   }
   return Utilities.formatDate(new Date(unixtime * 1000), timezone, format);
 }
+
+function throwError(msg){
+  let EMAIL = PropertiesService.getScriptProperties().getProperty("EMAIL");
+  if (!EMAIL) {
+    EMAIL = Session.getActiveUser().getEmail();
+  }
+  if (!EMAIL) throw new Error('Set "EMAIL" if necessary\n\n' + msg);
+  MailApp.sendEmail(EMAIL, msg);
+  throw new Error(msg);
+}

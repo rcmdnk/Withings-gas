@@ -2,54 +2,58 @@
  * Withings API Ref: https://developer.withings.com/oauth2/
  */
 
+const AUTHORIZATION_URL = 'https://account.withings.com/oauth2_user/authorize2';
+const TOKEN_URL = 'https://wbsapi.withings.net/v2/oauth2';
+
 /**
  * Authorizes and makes a request to the Withings API.
  */
 function request(url, payload, listName) {
   check_service();
   let mainList = getList(url, payload, listName);
-  if(mainList == 0){
-    Logger.log(e);
-    Logger.log('Try to refresh token.')
-    mainList = getList(url, payload, listName);
-  }
   return mainList;
 }
 
-/**                                                                             
- * Check service                                                                
- */                                                                             
-function check_service(){                                                       
-  const service = getService();                                                 
-  if (!service.hasAccess()) {                                                   
-    const authorizationUrl = service.getAuthorizationUrl();                     
-    const msg = 'Open the following URL and re-run the script: ' +              
-      authorizationUrl; 
-    let EMAIL = PropertiesService.getScriptProperties().getProperty("EMAIL");                                                        
-    if (!EMAIL) {                                                               
-      EMAIL = Session.getActiveUser().getEmail();                               
-    }                                                                           
-    if (!EMAIL) throw new Error('Set "EMAIL" if necessary\n\n' + msg);-         
-    MailApp.sendEmail(EMAIL,                                                    
-      'NEED AUTHENTICATION: Google App Script for Withings API', msg);          
-    throw new Error(msg);                                                       
-  }                                                                             
-  Logger.log('Service is authorized.')                                          
-}     
+/**
+ * Check service
+ */
+function check_service(){
+  const service = getService();
+  if (!service.hasAccess()) {
+    const authorizationUrl = service.getAuthorizationUrl();
+    const msg = `
+NEED AUTHENTICATION: Google App Script for Withings API.
+Open the following URL and re-run the script:
+${authorizationUrl}
+`
+    throwError(msg);
+  }
+  Logger.log('Service is authorized.')
+}
 
 /**
  * Get main list
  */
 function getList(url, payload, listName){
-  const service = getService();                                                 
+  const service = getService();
   const options = {
     headers: {
       Authorization: 'Bearer ' + service.getToken().body.access_token
     },
     payload: payload
   };
-  const response = UrlFetchApp.fetch(url, options);
+  let response = UrlFetchApp.fetch(url, options);
   let result = JSON.parse(response.getContentText());
+  if (('status' in result) && result['status'] != 401){
+    Logger.log('Try refreshing token.')
+    refresh();
+    response = UrlFetchApp.fetch(url, options);
+    result = JSON.parse(response.getContentText());
+  }
+  if (!('status' in result) || result['status'] != 0){
+    if ('error' in result) throwError('Failed to get list: ' + result['error']);
+    throwError('Failed to get list: Unknown error.');
+  }
   let mainList = [];
   while(true){
     if (!('status' in result) || result['status'] != 0){
@@ -70,14 +74,15 @@ function getList(url, payload, listName){
 /**
  * Refresh token
  */
-function refresh(service){
+function refresh(){
+  const service = getService();
   const payload = {
     refresh_token: service.getToken().body.refresh_token,
     client_id: service.clientId_,
     client_secret: service.clientSecret_,
     grant_type: 'refresh_token'
   };
-  const token = service.fetchToken_(payload, service.refreshUrl_);
+  let token = service.fetchToken_(payload, service.refreshUrl_);
   service.saveToken_(token);
   return token;
 }
@@ -96,13 +101,12 @@ function getService() {
   const properties = PropertiesService.getScriptProperties();
   const CLIENT_ID = properties.getProperty("CLIENT_ID");
   const CLIENT_SECRET = properties.getProperty("CLIENT_SECRET");
-  if (!CLIENT_ID) throw new Error('Set CLIENT_ID'); 
-  if (!CLIENT_SECRET) throw new Error('Set CLIENT_SECRET'); 
+  if (!CLIENT_ID) throw new Error('Set CLIENT_ID');
+  if (!CLIENT_SECRET) throw new Error('Set CLIENT_SECRET');
   return OAuth2.createService('Withings')
       // Set the endpoint URLs.
-      .setAuthorizationBaseUrl(
-          'https://account.withings.com/oauth2_user/authorize2')
-      .setTokenUrl('https://wbsapi.withings.net/v2/oauth2')
+      .setAuthorizationBaseUrl(AUTHORIZATION_URL)
+      .setTokenUrl(TOKEN_URL)
 
       // Set the client ID and secret.
       .setClientId(CLIENT_ID)
@@ -120,14 +124,13 @@ function getService() {
 
       // Set the property store where authorized tokens should be persisted.
       .setPropertyStore(PropertiesService.getUserProperties());
-
 }
 
 /**
  * TokenPayloadHandler
  */
 function myHandler(payload) {
-  payload.action = 'requesttoken'; 
+  payload.action = 'requesttoken';
   return payload;
 }
 
