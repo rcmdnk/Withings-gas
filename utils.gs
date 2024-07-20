@@ -45,6 +45,6 @@ function throwError(msg){
     EMAIL = Session.getActiveUser().getEmail();
   }
   if (!EMAIL) throw new Error('Set "EMAIL" if necessary\n\n' + msg);
-  MailApp.sendEmail(EMAIL, msg);
+  MailApp.sendEmail(EMAIL, 'Google App Script for Withings API Error', msg);
   throw new Error(msg);
 }
