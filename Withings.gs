@@ -35,20 +35,11 @@ ${authorizationUrl}
  * Get main list
  */
 function getList(url, payload, listName){
-  const service = getService();
-  const options = {
-    headers: {
-      Authorization: 'Bearer ' + service.getToken().body.access_token
-    },
-    payload: payload
-  };
-  let response = UrlFetchApp.fetch(url, options);
-  let result = JSON.parse(response.getContentText());
+  let result = getResult(url, payload);
   if (('status' in result) && result['status'] == 401){
     Logger.log('Try refreshing token.')
     refresh();
-    response = UrlFetchApp.fetch(url, options);
-    result = JSON.parse(response.getContentText());
+    result = getResult(url, payload);
   }
   if (!('status' in result) || result['status'] != 0){
     if ('error' in result) throwError('Failed to get list: ' + result['error']);
@@ -61,14 +52,34 @@ function getList(url, payload, listName){
     }
     mainList = mainList.concat(result['body'][listName]);
     if(result['body']['more']){
-      options['payload']['offset'] = result['body']['offset'];
-      response = UrlFetchApp.fetch(url, options);
-      result = JSON.parse(response.getContentText());
+      payload['offset'] = result['body']['offset'];
+      result = getResult(url, payload);
       continue;
     }
     break;
   }
   return mainList;
+}
+
+/**
+ * Get API response result
+ */
+function getResult(url, payload){
+  const options = {
+    headers: {
+      Authorization: 'Bearer ' + getAccessToken()
+    },
+    payload: payload
+  };
+  const response = UrlFetchApp.fetch(url, options);
+  return JSON.parse(response.getContentText());
+}
+
+/**
+ * Get access token
+ */
+function getAccessToken() {
+  return getService().getToken().body.access_token;
 }
 
 /**
