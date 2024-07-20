@@ -53,14 +53,20 @@ function sleepSummary() {
       'hr_max', 'hr_min', 'lightsleepduration', 'remsleepduration',
       'rr_average', 'rr_max', 'rr_min', 'sleep_score', 'snoring',
       'snoringepisodecount', 'wakeupcount', 'wakeupduration'];
-  const dateInfo = ['date',  'timezone', 'startdate', 'enddate'];
-  const columns = dateInfo.concat();
+  const columns = ['date',  'timezone', 'startdate', 'enddate'];
   fields.forEach(function(f) {
     columns.push(f);
   });
   const data = getSleepSummary(fields, dateInfo, DURATION_SLEEP_SUMMARY);
   if(!data) return;
-  fillValues('SleepSummary', columns, data, 'yyyy-MM-dd');
+  const sheet = fillValues('SleepSummary', columns, data, 'yyyy-MM-dd');
+  columns.forEach(function(c, i) {
+    if (c == 'startdate' || c == 'enddate') {
+      const charCode = 'A'.charCodeAt(0) + i;
+      cost character = String.fromCharCode(charCode);
+      sheet.getRange(`${character}:${character}`).setNumberFormat('yyyy-MM-dd HH:mm:ss');
+    }
+  });
 }
 
 function getSleepSummary(fields, dateInfo, duration=2592000) {

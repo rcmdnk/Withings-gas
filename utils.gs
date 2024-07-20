@@ -29,6 +29,7 @@ function fillValues(sheetName, columns, data, formatA='yyyy/MM/dd HH:mm:ss') {
         data_new.length, columns.length).setValues(data_new);
     sheet.getRange(2, 1, sheet.getLastRow()-1, sheet.getLastColumn()).sort(1);
   }
+  return sheet;
 }
 
 function getDate(unixtime=null, timezone=null, format='yyyy/MM/dd HH:mm:ss'){
