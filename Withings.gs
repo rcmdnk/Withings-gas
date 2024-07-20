@@ -44,7 +44,7 @@ function getList(url, payload, listName){
   };
   let response = UrlFetchApp.fetch(url, options);
   let result = JSON.parse(response.getContentText());
-  if (('status' in result) && result['status'] != 401){
+  if (('status' in result) && result['status'] == 401){
     Logger.log('Try refreshing token.')
     refresh();
     response = UrlFetchApp.fetch(url, options);

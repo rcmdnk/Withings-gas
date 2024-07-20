@@ -2,7 +2,7 @@
 function sleepTest() {
   const today = new Date() ;
   const enddate = Math.floor(today.getTime() / 1000);
-  const startdate = enddate - DURATION_SLEEP_SUMMARY;
+  const startdate = enddate - 60 * 60 * 24;
   sleep(startdate, enddate);
 }
 
