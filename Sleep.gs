@@ -53,12 +53,10 @@ function sleepSummary() {
       'hr_max', 'hr_min', 'lightsleepduration', 'remsleepduration',
       'rr_average', 'rr_max', 'rr_min', 'sleep_score', 'snoring',
       'snoringepisodecount', 'wakeupcount', 'wakeupduration'];
-  const columns = ['date',  'timezone', 'startdate', 'enddate'];
-  fields.forEach(function(f) {
-    columns.push(f);
-  });
+  const dateInfo = ['date',  'timezone', 'startdate', 'enddate'];
   const data = getSleepSummary(fields, dateInfo, DURATION_SLEEP_SUMMARY);
   if(!data) return;
+  const columns = dateInfo.concat(fields);
   const sheet = fillValues('SleepSummary', columns, data, 'yyyy-MM-dd');
   columns.forEach(function(c, i) {
     if (c == 'startdate' || c == 'enddate') {
