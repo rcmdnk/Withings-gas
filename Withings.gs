@@ -34,6 +34,9 @@ function check_service(){
       'NEED AUTHENTICATION: Google App Script for Withings API', msg);          
     throw new Error(msg);                                                       
   }                                                                             
+  // Access tokens expire after 3 hours, refresh it now
+  // https://developer.withings.com/developer-guide/v3/integration-guide/dropship-cellular/get-access/access-and-refresh-tokens/
+  refresh(service);
   Logger.log('Service is authorized.')                                          
 }     
 
