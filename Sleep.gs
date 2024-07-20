@@ -61,7 +61,7 @@ function sleepSummary() {
   columns.forEach(function(c, i) {
     if (c == 'startdate' || c == 'enddate') {
       const charCode = 'A'.charCodeAt(0) + i;
-      cost character = String.fromCharCode(charCode);
+      const character = String.fromCharCode(charCode);
       sheet.getRange(`${character}:${character}`).setNumberFormat('yyyy-MM-dd HH:mm:ss');
     }
   });
